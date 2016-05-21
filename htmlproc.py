@@ -20,7 +20,7 @@ def retrieve_url(url):
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.108 Safari/537.36'})
     except requests.exceptions.RequestException as e:
         return {'error': str(e)}
-    return {'url': response.url, 'content': response.content}
+    return {'url': response.url, 'content': response.content, 'encoding': response.encoding}
 
 
 def extract_by_selectors(doc, selectors):
@@ -69,11 +69,27 @@ def simplify_html(s, url):
     return txt
 
 
-def prepare_html(s, url, selectors):
-    try:
-        doc = html.fromstring(s)
-    except etree.ParserError as e:
-        return {'error': str(e)}
+def prepare_html(s, url, selectors, encoding):
+    decoded = None
+    doc = None
+    if encoding:
+        try:
+            decoded = s.decode(encoding)
+        except UnicodeDecodeError:
+            pass
+    if decoded is not None:
+        try:
+            doc = html.fromstring(decoded)
+        except etree.ParserError as e:
+            return {'error': str(e)}
+        except ValueError:
+            pass
+    if doc is None:
+        try:
+            doc = html.fromstring(s)
+        except etree.ParserError as e:
+            return {'error': str(e)}
+
     if doc.tag == 'html':
         title = doc.find('.//title')
         if title is not None:
@@ -98,7 +114,7 @@ def get_prepared_html(url, selectors):
     res1 = retrieve_url(url)
     if 'error' in res1:
         return res1
-    res2 = prepare_html(res1['content'], url, selectors)
+    res2 = prepare_html(res1['content'], url, selectors, res1['encoding'])
     if 'error' in res2:
         return res2
     res2['url'] = res1['url']
