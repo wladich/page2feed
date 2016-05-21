@@ -1,0 +1,27 @@
+$def with (content)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .error, .wrong {
+            background-color: #fdd;
+        }
+        ins {background-color: #dfd}
+        del {background-color: #fdd}
+    </style>
+
+    <script>
+        function formatTime(t) {
+            var d = new Date(t * 1000);
+            return d.toString();
+        }
+    </script>
+    $if content.get('title'):
+        <title>$content.get('title')</title>
+    $:content.get("head", "")
+</head>
+<body>
+    $:content
+</body>
+</html>

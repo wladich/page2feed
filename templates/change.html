@@ -1,0 +1,18 @@
+$def with (feed, change)
+<dl>
+    <dt>Feed name</dt>
+    <dd>$feed['name']</dd>
+
+    <dt>Url:</dt>
+    <dd>$feed['url']</dd>
+
+    <dt>Selectors</dt>
+    <dd>
+        $for s in feed['selector'].splitlines():
+            $(s)<br/>
+    </dd>
+</dl>
+Summary: $change['summary']</br>
+Details:<br>
+<div>$:change['details']</div>
+

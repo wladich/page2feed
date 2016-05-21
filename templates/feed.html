@@ -1,0 +1,39 @@
+$def with (feed, changes, rss_url)
+$var head = '<link href="%s" rel="alternate" type="application/rss+xml" title="%s"/>' % (rss_url, feed['name'])
+$var title =  'Changes for feed "%s"' % feed['name']
+
+
+<dl>
+    <dt>Feed name</dt>
+    <dd>$feed['name']</dd>
+
+    <dt>Url:</dt>
+    <dd><a href="$feed['url']">$feed['url']</a></dd>
+
+    <dt>Selectors</dt>
+    <dd>
+        $for s in feed['selector'].splitlines():
+            $(s)<br/>
+    </dd>
+
+    <dt>Created</dt>
+    <dd><script>document.write(formatTime($feed['created']))</script></dd>
+
+    <dt>Last checked</dt>
+    <dd><script>document.write(formatTime($feed['lastcheck']))</script></dd>
+
+    <dt>RSS Feed</dt>
+    <dd><a href="$rss_url">$rss_url</a></dd>
+
+</dl>
+<h4>Last changes</h4>
+$if not changes:
+    <p>No changes detected</p>
+$else:
+    <table>
+        $for c in changes:
+            <tr>
+                <td><a href="/change/$c['id']"><script>document.write(formatTime($c['time']))</script></a></td>
+                <td>$c['summary']</td>
+            </tr>
+    </table>

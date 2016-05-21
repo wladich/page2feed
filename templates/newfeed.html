@@ -1,0 +1,15 @@
+$def with (form, feed_name=None, page_preview=None)
+$var title = "Create RSS feed for any page" if not feed_name else "Create RSS feed for page %s" % feed_name
+
+<p>Create new feed:</p>
+<form name="newfeed" method="POST">
+    $if not form.valid: <p class="error">Invalid input, try again</p>
+    $:form.render()
+    <input type="submit" name="do_preview" value="Check"/>
+    <input type="submit" name="do_create" value="Create feed"/>
+</form>
+$if feed_name:
+    Feed name: $feed_name
+$if page_preview:
+    <hr/>
+    <div>$:{pre(page_preview)}</div>

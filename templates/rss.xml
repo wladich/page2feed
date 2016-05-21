@@ -1,0 +1,18 @@
+$def with (feed, changes)
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+    <channel>
+        <title>$feed['name']</title>
+        <description>Monitored by Web2Feed $feed['url']</description>
+        <link>$feed['url']</link>
+
+    $for c in changes:
+        <item>
+            <title>$c['summary']</title>
+            <description>$c['details']</description>
+            <link>$feed['url']</link>
+            <guid isPermaLink="false">Web2FeedChange$c['id']</guid>
+            <pubDate>${format_time(c['time'])}</pubDate>
+        </item>
+    </channel>
+</rss>
