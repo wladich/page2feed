@@ -5,7 +5,7 @@ import htmlproc
 import logging as log
 import utils
 
-log.basicConfig(level=log.DEBUG)
+log.basicConfig(format='%(asctime)s %(message)s', level=log.DEBUG)
 
 
 def iterate_feeds_needing_update():
