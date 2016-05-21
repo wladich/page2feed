@@ -4,30 +4,16 @@ import difflib
 import html2text
 import requests
 import requests.exceptions
-import time
 from copy import deepcopy
 from lxml import html, etree
 from lxml.html.clean import Cleaner
 import web
 
 
-def timeit(method):
-    def timed(*args, **kw):
-        ts = time.time()
-        result = method(*args, **kw)
-        te = time.time()
-        print '%r (%r, %r) %2.2f sec' % \
-              (method.__name__, args, kw, te - ts)
-        return result
-
-    return timed
-
-
 class HtmlException(Exception):
     pass
 
 
-@timeit
 def retrieve_url(url):
     try:
         response = requests.get(url, timeout=10, headers={
@@ -37,7 +23,6 @@ def retrieve_url(url):
     return {'url': response.url, 'content': response.content}
 
 
-@timeit
 def extract_by_selectors(doc, selectors):
     selected_nodes = []
     for selector in selectors:
@@ -71,7 +56,6 @@ def extract_by_selectors(doc, selectors):
     return seen_nodes.values()[0].getroottree().getroot()
 
 
-@timeit
 def filter_doc(doc):
     cleaner = Cleaner(scripts=True, javascript=True, comments=True, style=True, links=True,
                       meta=True, page_structure=False, processing_instructions=True, embedded=True, frames=True,
@@ -85,7 +69,6 @@ def simplify_html(s, url):
     return txt
 
 
-@timeit
 def prepare_html(s, url, selectors):
     try:
         doc = html.fromstring(s)

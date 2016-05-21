@@ -40,7 +40,6 @@ class NewFeed(object):
         frm = new_feed_form()
         return render.newfeed(frm)
 
-    @htmlproc.timeit
     def POST(self):
         frm = new_feed_form()
         if not frm.validates():
