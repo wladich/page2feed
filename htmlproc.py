@@ -76,7 +76,7 @@ def simplify_html(s, url):
 def prepare_html(s, url, selectors, encoding):
     doc = None
     if encoding:
-        decoded = s.decode(encoding, errors='relace')
+        decoded = s.decode(encoding, errors='replace')
     else:
         decoded = UnicodeDammit(s).unicode_markup
     try:
