@@ -8,6 +8,7 @@ from copy import deepcopy
 from lxml import html, etree
 from lxml.html.clean import Cleaner
 import web
+from bs4 import UnicodeDammit
 
 
 class HtmlException(Exception):
@@ -20,7 +21,10 @@ def retrieve_url(url):
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.108 Safari/537.36'})
     except requests.exceptions.RequestException as e:
         return {'error': str(e)}
-    return {'url': response.url, 'content': response.content, 'encoding': response.encoding}
+    encoding = response.encoding
+    if encoding == 'ISO-8859-1':
+        encoding = None
+    return {'url': response.url, 'content': response.content, 'encoding': encoding}
 
 
 def extract_by_selectors(doc, selectors):
@@ -70,27 +74,16 @@ def simplify_html(s, url):
 
 
 def prepare_html(s, url, selectors, encoding):
-    decoded = None
     doc = None
     if encoding:
-        try:
-            decoded = s.decode(encoding)
-        except UnicodeDecodeError:
-            pass
-    if decoded is not None:
-        try:
-            doc = html.fromstring(decoded)
-        except etree.ParserError as e:
-            return {'error': str(e)}
-        except ValueError:
-            pass
-    if doc is None:
-        try:
-            doc = html.fromstring(s)
-        except etree.ParserError as e:
-            return {'error': str(e)}
-
-    if doc.tag == 'html':
+        decoded = s.decode(encoding, errors='relace')
+    else:
+        decoded = UnicodeDammit(s).unicode_markup
+    try:
+        doc = html.fromstring(decoded)
+    except (etree.ParserError, ValueError):
+        pass
+    if doc and doc.tag == 'html':
         title = doc.find('.//title')
         if title is not None:
             title = title.text.strip()
@@ -103,7 +96,7 @@ def prepare_html(s, url, selectors, encoding):
         doc.make_links_absolute(url)
         txt = simplify_html(serialize_doc(doc), url)
     else:
-        txt = s
+        txt = decoded
         title = None
         if selectors:
             return {'error': 'Can not apply selectors to non-html document'}
@@ -228,10 +221,4 @@ def style_diff(s):
 
 
 if __name__ == '__main__':
-    # print get_prepared_html('https://raw.githubusercontent.com/slazav/map_podm/master/vmap/n37-019.vmap', [])
-    s = open('/home/w/tmp/cor.php').read()
-    txt1 = prepare_html(s, 'http://d3.ru', [])['txt']
-    # print txt1
-    # s = open('/home/w/tmp/d3_3.html').read()
-    # txt2 = prepare_html(s, 'http://d3.ru', [])['txt']
-    print get_web_safe_diff(txt1, txt1[:-200])
+    pass
