@@ -83,7 +83,7 @@ def prepare_html(s, url, selectors, encoding):
         doc = html.fromstring(decoded)
     except (etree.ParserError, ValueError):
         pass
-    if doc and doc.tag == 'html':
+    if doc is not None and doc.tag == 'html':
         title = doc.find('.//title')
         if title is not None:
             title = title.text.strip()
