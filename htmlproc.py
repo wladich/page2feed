@@ -118,23 +118,6 @@ def serialize_doc(doc):
     return html.tostring(doc)
 
 
-class InsensitiveSequenceMatcher(difflib.SequenceMatcher):
-    """
-    Acts like SequenceMatcher, but tries not to find very small equal
-    blocks amidst large spans of changes
-    """
-
-    threshold = 2
-
-    def get_matching_blocks(self):
-        size = min(len(self.b), len(self.b))
-        threshold = min(self.threshold, size / 4)
-        actual = difflib.SequenceMatcher.get_matching_blocks(self)
-        return [item for item in actual
-                if item[2] > threshold
-                or not item[2]]
-
-
 def tokenize_line(s):
     delimiters = ' ', '<', '>', '\n'
     tokens = []
@@ -151,7 +134,7 @@ def diff_inline(text1, text2):
     words1 = tokenize_line(text1)
     words2 = tokenize_line(text2)
     diff = []
-    s = InsensitiveSequenceMatcher(a=words1, b=words2)
+    s = difflib.SequenceMatcher(a=words1, b=words2)
     commands = s.get_opcodes()
     for command, i1, i2, j1, j2 in commands:
         if command == 'equal':
@@ -182,7 +165,7 @@ def get_web_safe_diff(text1, text2):
     lines1 = text1.splitlines(True)
     lines2 = text2.splitlines(True)
     diff = []
-    s = InsensitiveSequenceMatcher(a=lines1, b=lines2)
+    s = difflib.SequenceMatcher(a=lines1, b=lines2)
     commands = s.get_opcodes()
     for command, i1, i2, j1, j2 in commands:
         if command == 'replace':
