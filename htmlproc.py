@@ -9,6 +9,7 @@ from lxml import html, etree
 from lxml.html.clean import Cleaner
 import web
 from bs4 import UnicodeDammit
+import re
 
 
 class HtmlException(Exception):
@@ -119,14 +120,8 @@ def serialize_doc(doc):
 
 
 def tokenize_line(s):
-    delimiters = ' ', '<', '>', '\n'
-    tokens = []
-    last_pos = 0
-    for i, c in enumerate(s[1:], 1):
-        if c in delimiters:
-            tokens.append(s[last_pos:i])
-            last_pos = i
-    tokens.append(s[last_pos:])
+    tokens = re.split(r'([ <>\n\[\]]+)', s)
+    print tokens
     return tokens
 
 
