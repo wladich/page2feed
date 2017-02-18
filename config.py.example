@@ -1,3 +1,4 @@
 import web
+web.config.debug = False
 db = web.database(dbn='sqlite', db='/var/lib/page2feed/page2feed.db')
 base_url = 'http://page2feed.com'
