@@ -73,6 +73,12 @@ def simplify_html(s, url):
     txt = html2text.html2text(s, url, 1e100)
     return txt
 
+def process_links(doc):
+    # remove timestamps from image urls
+    for img in doc.cssselect('img'):
+        if 'src' in img.attrib:
+            img.attrib['src'] = re.sub(r'=[12]\d{9}', '=TIMESTAMP', img.attrib['src'])
+
 
 def prepare_html(s, url, selectors, encoding):
     doc = None
@@ -95,6 +101,7 @@ def prepare_html(s, url, selectors, encoding):
             except HtmlException as e:
                 return {'error': str(e)}
         doc.make_links_absolute(url)
+        process_links(doc)
         txt = simplify_html(serialize_doc(doc), url)
     else:
         txt = decoded
