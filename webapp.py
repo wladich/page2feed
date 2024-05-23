@@ -46,7 +46,7 @@ class NewFeed(object):
             return render.newfeed(frm)
         selectors = frm['selector'].value.splitlines()
         selectors = [s.strip() for s in selectors]
-        selectors = filter(None, selectors)
+        selectors = [sel for sel in selectors if sel]
 
         feed = model.find_feed(frm['url'].value, selectors)
         if feed:

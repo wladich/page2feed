@@ -58,7 +58,7 @@ def extract_by_selectors(doc, selectors):
                 seen_nodes[parent] = new_parent
             element = parent
             new_element = new_parent
-    return seen_nodes.values()[0].getroottree().getroot()
+    return list(seen_nodes.values())[0].getroottree().getroot()
 
 
 def filter_doc(doc):
@@ -70,7 +70,7 @@ def filter_doc(doc):
 
 
 def simplify_html(s, url):
-    txt = html2text.html2text(s, url, 1e100)
+    txt = html2text.html2text(s.decode(errors='replace'), url, 1_000_000)
     return txt
 
 def process_links(doc):
@@ -128,7 +128,7 @@ def serialize_doc(doc):
 
 def tokenize_line(s):
     tokens = re.split(r'([ <>\n\[\]]+)', s)
-    print tokens
+    print(tokens)
     return tokens
 
 

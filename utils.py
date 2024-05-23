@@ -2,7 +2,7 @@
 
 import base64
 import requests
-import urlparse
+import urllib.parse
 import time
 
 
@@ -11,7 +11,7 @@ def datauri(s):
 
 
 def get_favicon(url):
-    url = urlparse.urlparse(url)
+    url = urllib.parse.urlparse(url)
     url = '%s://%s/favicon.ico' % (url.scheme, url.netloc)
     try:
         response = requests.get(url)

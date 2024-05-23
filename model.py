@@ -13,7 +13,6 @@ def get_one(response):
 def create_feed(url, name, selectors, favicon, update_interval, content):
     now = utils.now()
     selectors = '\n'.join(selectors)
-    favicon = buffer(favicon) if favicon else None
     return db.insert('feed', url=url, name=name, selector=selectors, favicon=favicon,
                      update_interval=update_interval, created=now, lastcheck=now, lastcontent=content)
 
@@ -31,7 +30,7 @@ def get_feed(feedid):
 
 
 def get_changes(feedid):
-    return db.select('change', {'feedid': feedid}, where='feedid=$feedid', order='id DESC', limit=25)
+    return list(db.select('change', {'feedid': feedid}, where='feedid=$feedid', order='id DESC', limit=25))
 
 
 def get_change(changeid):
